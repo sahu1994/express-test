@@ -1,43 +1,36 @@
 const express = require("express");
-require('dotenv').config();
+require("dotenv").config();
 const mongoose = require("mongoose");
 const app = express();
-const cors  = require("cors");
-const DataModel = require("./model/datasource.js");
-const userRounter = require("./routes/usersRouter.js");
-const authRoutes = require("./routes/authRoutes.js");
+const cors = require("cors");
+const Task = require("./model/taskModel");
+const taskRoutes = require("./routes/taskRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const PORT = "3000";
 
 const corsOpts = {
-  origin: '*',
+  origin: "*",
 
-  methods: [
-    'GET',
-    'POST',
-    'DELETE',
-    'PATCH',
-     'PUT',
-  ],
+  methods: ["GET", "POST", "DELETE", "PATCH", "PUT"],
 };
 
 app.use(cors(corsOpts));
 
 app.use(express.json());
-app.use("/users", userRounter);
-app.use("/user", authRoutes);
+app.use("/tasks", taskRoutes);
+app.use("/", authRoutes);
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI);
 
 app.get("/", async (req, res) => {
   try {
-    const data = await DataModel.find();
+    const data = await Task.find();
     res.status(200).json({ message: "Data retrieved successfully", data });
   } catch (err) {
     res.status(500).json({ error: "Failed to retrieve data", details: err });
   }
 });
-
 
 app.all("*", (req, res) => {
   res
