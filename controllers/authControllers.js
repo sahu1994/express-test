@@ -2,9 +2,10 @@ const User = require("./../model/userModel");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const signToken = id => jwt.sign({ id: id }, process.env.JWT_SECRET, {
-  expiresIn: process.env.JWT_EXPIRES,
-});
+const signToken = (id) =>
+  jwt.sign({ id: id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES,
+  });
 
 exports.signUp = async (req, res, next) => {
   try {
@@ -31,4 +32,35 @@ exports.login = async (req, res, next) => {
 
   const token = signToken(user._id);
   res.status(200).json({ status: "success", token });
+};
+
+//This function verifies jwt token
+exports.protect = async (req, res, next) => {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  //check if token exists
+  if (!token) {
+    res
+      .status(404)
+      .json({ status: "No access", message: "You are not logged in" });
+  }
+
+  //Verification token
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    //Grant access to the protected route
+    if (decoded !== null) {
+      next();
+    }
+  } catch (err) {
+    res
+      .status(404)
+      .json({ status: "fail", message: "Token expired or incorrect" });
+  }
 };
