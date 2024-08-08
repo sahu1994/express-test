@@ -11,6 +11,7 @@ const PORT = "3000";
 app.use(express.json());
 app.use("/users", userRounter);
 app.use("/user", authRoutes);
+app.use(cors())
 
 mongoose.connect(process.env.MONGO_URI)
 
