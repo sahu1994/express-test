@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 require('dotenv').config();
 
-
-//mongoose.connect("mongodb+srv://sahugirish:9BEuTRFa6zlLWoqY@cluster0.sysve.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 mongoose.connect(process.env.MONGO_URI)
 
 const Schema = mongoose.Schema;
