@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
-const DataModel = require("./datasource.js")
-const userRounter = require("./usersRouter.js");
+const DataModel = require("./model/datasource.js")
+const userRounter = require("./routes/usersRouter.js");
 
 const PORT = "3000";
 

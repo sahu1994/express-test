@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const DataModel = require("./datasource.js");
+const DataModel = require("../model/datasource.js");
 
 router
   .get("/", async (req, res, next) => {
