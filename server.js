@@ -2,16 +2,30 @@ const express = require("express");
 require('dotenv').config();
 const mongoose = require("mongoose");
 const app = express();
+const cors  = require("cors");
 const DataModel = require("./model/datasource.js");
 const userRounter = require("./routes/usersRouter.js");
 const authRoutes = require("./routes/authRoutes.js");
 
 const PORT = "3000";
 
+const corsOpts = {
+  origin: '*',
+
+  methods: [
+    'GET',
+    'POST',
+    'DELETE',
+    'PATCH',
+     'PUT',
+  ],
+};
+
+app.use(cors(corsOpts));
+
 app.use(express.json());
 app.use("/users", userRounter);
 app.use("/user", authRoutes);
-app.use(cors())
 
 mongoose.connect(process.env.MONGO_URI)
 
