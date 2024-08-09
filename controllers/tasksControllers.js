@@ -23,7 +23,7 @@ exports.updateTaskById = async (req, res, next) => {
         runValidators: true,
       }
     );
-    if (!item) {
+    if (!data) {
       return res
         .status(404)
         .json({ status: "fail", message: "Task not updated" });
