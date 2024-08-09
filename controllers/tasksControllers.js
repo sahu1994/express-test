@@ -15,7 +15,7 @@ exports.getTaskByID = async (req, res, next) => {
 
 exports.updateTaskById = async (req, res, next) => {
   try {
-    const item = await Task.findOneAndUpdate(
+    const data = await Task.findOneAndUpdate(
       { userId: req.params.id },
       req.body,
       {
@@ -28,7 +28,7 @@ exports.updateTaskById = async (req, res, next) => {
         .status(404)
         .json({ status: "fail", message: "Task not updated" });
     }
-    res.status(200).json({item});
+    res.status(200).json({data});
   } catch (error) {
     res.status(500).json({ error: error });
   }
