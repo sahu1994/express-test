@@ -27,7 +27,7 @@ const taskSchema = new Schema({
   },
   priority: { type: String, enum: ["High", "Medium", "Low"] },
   tags: [String],
-  dueDate: Date,
+  dueDate: { type: Date, default: Date.now },
   comments: [{ text: String, date: Date }],
   activityLog: [{ action: String, date: Date }],
 });
