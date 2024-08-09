@@ -15,16 +15,20 @@ exports.getTaskByID = async (req, res, next) => {
 
 exports.updateTaskById = async (req, res, next) => {
   try {
-    const Task = await Task.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!Task) {
+    const item = await Task.findOneAndUpdate(
+      { userId: req.params.id },
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    if (!item) {
       return res
         .status(404)
         .json({ status: "fail", message: "Task not updated" });
     }
-    res.status(200).json(Task);
+    res.status(200).json({item});
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -57,9 +61,7 @@ exports.updateTask = async (req, res, next) => {
 exports.postTask = async (req, res, next) => {
   try {
     const newItem = await new Task(req.body).save();
-    res
-      .status(200)
-      .json({ message: "Data added successfully", data: newItem });
+    res.status(200).json({ message: "Data added successfully", data: newItem });
   } catch (err) {
     res.status(500).json({ error: "Failed to add data", details: err });
   }
