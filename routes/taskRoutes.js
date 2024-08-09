@@ -9,10 +9,11 @@ const {
 } = require("../controllers/tasksControllers");
 const { protect } = require("../controllers/authControllers");
 
-router.route("/").get(getAllTasks).post(postTask);
+router.route("/").post(postTask);
 
 router
   .route("/:id")
+  .get(getAllTasks)
   .get(getTaskByID)
   .put(updateTaskById)
   .delete(deleteTaskById);

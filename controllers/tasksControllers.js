@@ -59,7 +59,7 @@ exports.postTask = async (req, res, next) => {
     const newItem = await new Task(req.body).save();
     res
       .status(200)
-      .json({ message: "Data added successfully", data: { newItem } });
+      .json({ message: "Data added successfully", data: newItem });
   } catch (err) {
     res.status(500).json({ error: "Failed to add data", details: err });
   }
@@ -67,7 +67,7 @@ exports.postTask = async (req, res, next) => {
 
 exports.getAllTasks = async (req, res, next) => {
   try {
-    const data = await Task.find();
+    const data = await Task.find({ userId: req.params.id });
     res.status(200).json({ message: "Data retrieved successfully", data });
   } catch (err) {
     res.status(500).json({ error: "Failed to retrieve data", details: err });

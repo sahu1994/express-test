@@ -9,9 +9,9 @@ const signToken = (id) =>
 
 exports.signUp = async (req, res, next) => {
   try {
-    const newUser = await User.create(req.body);
-    const token = signToken(newUser._id);
-    res.status(201).json({ status: "success", token, data: { user: newUser } });
+    const user = await User.create(req.body);
+    const token = signToken(user._id);
+    res.status(201).json({ status: "success", token, data: user });
   } catch (err) {
     res.status(400).json({ err });
   }
@@ -31,7 +31,9 @@ exports.login = async (req, res, next) => {
   }
 
   const token = signToken(user._id);
-  res.status(200).json({ status: "success", token });
+  res
+    .status(200)
+    .json({ status: "success", token, data: user});
 };
 
 //This function verifies jwt token

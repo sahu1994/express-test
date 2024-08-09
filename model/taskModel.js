@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const taskSchema = new Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   title: {
     type: String,
     required: true,
@@ -26,13 +27,13 @@ const taskSchema = new Schema({
   },
 });
 
-taskSchema.pre('save', function (next) {
+taskSchema.pre("save", function (next) {
   if (this.isModified()) {
     this.updatedAt = Date.now();
   }
   next();
 });
 
-const Task = mongoose.model('Task', taskSchema);
+const Task = mongoose.model("Task", taskSchema);
 
 module.exports = Task;
