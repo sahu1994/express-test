@@ -43,21 +43,6 @@ exports.deleteTaskById = async (req, res, next) => {
   }
 };
 
-exports.updateTask = async (req, res, next) => {
-  try {
-    const Task = await Task.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!Task) {
-      return res.status(404).send();
-    }
-    res.status(200).json(Task);
-  } catch (error) {
-    res.status(500).json({ error: "Item not updated" });
-  }
-};
-
 exports.postTask = async (req, res, next) => {
   try {
     const newItem = await new Task(req.body).save();

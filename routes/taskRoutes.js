@@ -9,13 +9,13 @@ const {
 } = require("../controllers/tasksControllers");
 const { protect } = require("../controllers/authControllers");
 
-router.route("/").post(postTask);
+router.route("/").post(protect, postTask);
 
 router
   .route("/:id")
-  .get(getAllTasks)
-  .get(getTaskByID)
-  .put(updateTaskById)
-  .delete(deleteTaskById);
+  .get(protect, getAllTasks)
+  .get(protect, getTaskByID)
+  .put(protect, updateTaskById)
+  .delete(protect, deleteTaskById);
 
 module.exports = router;
