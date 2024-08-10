@@ -1,6 +1,10 @@
 const User = require("./../model/userModel");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const { OAuth2Client } = require("google-auth-library");
+const CLIENT_ID =
+  "442561328232-1pt2k7797vl0f04mvr9jh85e26k9ephe.apps.googleusercontent.com";
+const client = new OAuth2Client(CLIENT_ID);
 
 const signToken = (id) =>
   jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -31,12 +35,9 @@ exports.login = async (req, res, next) => {
   }
 
   const token = signToken(user._id);
-  res
-    .status(200)
-    .json({ status: "success", token, data: user});
+  res.status(200).json({ status: "success", token, data: user });
 };
 
-//This function verifies jwt token
 exports.protect = async (req, res, next) => {
   let token;
   if (
@@ -46,17 +47,14 @@ exports.protect = async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
   }
 
-  //check if token exists
   if (!token) {
     res
       .status(404)
       .json({ status: "No access", message: "You are not logged in" });
   }
 
-  //Verification token
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    //Grant access to the protected route
     if (decoded !== null) {
       next();
     }
@@ -64,5 +62,29 @@ exports.protect = async (req, res, next) => {
     res
       .status(404)
       .json({ status: "fail", message: "Token expired or incorrect" });
+  }
+};
+
+exports.googleLogin = async (req, res, next) => {
+  const { token } = req.body;
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: CLIENT_ID,
+    });
+    const { name, email, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({ name, email, photo: picture });
+    }
+
+    const jwtToken = signToken(user?._id)
+
+    res.json({ user, token: jwtToken });
+  } catch (error) {
+    console.error("Google authentication error:", error);
+    res.status(401).json({ error: "Google authentication failed" });
   }
 };
