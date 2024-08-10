@@ -16,7 +16,7 @@ exports.getTaskByID = async (req, res, next) => {
 exports.updateTaskById = async (req, res, next) => {
   try {
     const data = await Task.findOneAndUpdate(
-      { userId: req.params.id },
+      { _id : req.params.id },
       req.body,
       {
         new: true,
