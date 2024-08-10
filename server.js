@@ -7,19 +7,12 @@ const Task = require("./model/taskModel");
 const taskRoutes = require("./routes/taskRoutes");
 const authRoutes = require("./routes/authRoutes");
 
-const PORT = "3000";
+const PORT = "4000";
 
-const corsOpts = {
-  origin: "*",
-
-  methods: ["GET", "POST", "DELETE", "PATCH", "PUT"],
-};
-
-app.use(cors(corsOpts));
-
+app.use(cors());
 app.use(express.json());
-app.use("/tasks", taskRoutes);
 app.use("/", authRoutes);
+app.use("/tasks", taskRoutes);
 
 mongoose.connect(process.env.MONGO_URI);
 
