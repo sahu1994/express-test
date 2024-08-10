@@ -8,7 +8,7 @@ const client = new OAuth2Client(CLIENT_ID);
 
 const signToken = (id) =>
   jwt.sign({ id: id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES,
+    expiresIn: "30s",
   });
 
 exports.signUp = async (req, res, next) => {
@@ -80,7 +80,7 @@ exports.googleLogin = async (req, res, next) => {
       user = await User.create({ name, email, photo: picture });
     }
 
-    const jwtToken = signToken(user?._id)
+    const jwtToken = signToken(user?._id);
 
     res.json({ user, token: jwtToken });
   } catch (error) {
