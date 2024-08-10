@@ -65,7 +65,7 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-exports.googleLogin = async (req, res, next) => {
+exports.googleLogin = async (req, res) => {
   const { token } = req.body;
 
   try {
@@ -77,12 +77,16 @@ exports.googleLogin = async (req, res, next) => {
 
     let user = await User.findOne({ email });
     if (!user) {
-      user = await User.create({ name, email, photo: picture });
+      user = await User.create({
+        name,
+        email,
+        photo: picture,
+        googleId: email, //Password and confirm password are null here in case of google login
+      });
     }
 
-    //const jwtToken = signToken(user?._id);
-
-    res.json({ user, token: "jwtToken" });
+    const jwtToken = signToken(user?._id);
+    res.json({ user, token: jwtToken });
   } catch (error) {
     console.error("Google authentication error:", error);
     res.status(401).json({ error: "Google authentication failed" });

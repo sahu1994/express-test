@@ -12,18 +12,24 @@ const User = new Schema({
   },
   password: {
     type: String,
-    required: [true, "Please provide your password"],
-    minlength: 8,
+    required: function () {
+      return !this.googleId; // Only required if not signing up via Google
+    },
+    minlength: 6,
   },
   passwordConfirm: {
     type: String,
-    required: [true, "Please confirm your password"],
     validate: {
       validator: function (el) {
         return el === this.password;
       },
       message: "Passwords are not same",
     },
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
   },
   photo: { type: String },
 });
@@ -32,11 +38,14 @@ User.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 8);
   this.passwordConfirm = undefined;
-  next()
+  next();
 });
 
-User.methods.correctPassword = async function(candidatePassword, userPassword){
-    return await bcrypt.compare(candidatePassword, userPassword);
-}
+User.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 module.exports = moongose.model("User", User);
