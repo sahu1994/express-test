@@ -7,7 +7,7 @@ exports.getTaskByID = async (req, res, next) => {
     if (item) {
       res.status(200).json(item);
     } else {
-      res.status(400).json({ status: "No item found" });
+      next(new AppError("No task found with this id", 404));
     }
   } catch (err) {
     next(err);
