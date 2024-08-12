@@ -1,4 +1,5 @@
 const Task = require("../model/taskModel");
+const AppError = require("../utils/AppError");
 
 exports.getTaskByID = async (req, res, next) => {
   try {
@@ -9,7 +10,7 @@ exports.getTaskByID = async (req, res, next) => {
       res.status(400).json({ status: "No item found" });
     }
   } catch (err) {
-    res.status(500).json({ error: "Failed to retrieve data", details: err });
+    next(err);
   }
 };
 
@@ -24,13 +25,11 @@ exports.updateTaskById = async (req, res, next) => {
       }
     );
     if (!data) {
-      return res
-        .status(404)
-        .json({ status: "fail", message: "Task not updated" });
+      return next(AppError("Task not found", 404));
     }
     res.status(200).json({data});
   } catch (error) {
-    res.status(500).json({ error: error });
+    next(error);
   }
 };
 
@@ -39,7 +38,7 @@ exports.deleteTaskById = async (req, res, next) => {
     await Task.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Deleted successfully" });
   } catch (err) {
-    res.status(500).json({ error: "Failed to retrieve data", details: err });
+    next(err);
   }
 };
 
@@ -48,7 +47,7 @@ exports.postTask = async (req, res, next) => {
     const newItem = await new Task(req.body).save();
     res.status(200).json({ message: "Data added successfully", data: newItem });
   } catch (err) {
-    res.status(500).json({ error: "Failed to add data", details: err });
+    next(err);
   }
 };
 
@@ -57,6 +56,6 @@ exports.getAllTasks = async (req, res, next) => {
     const data = await Task.find({ userId: req.params.id });
     res.status(200).json({ message: "Data retrieved successfully", data });
   } catch (err) {
-    res.status(500).json({ error: "Failed to retrieve data", details: err });
+    next(err);
   }
 };

@@ -1,34 +1,28 @@
 const express = require("express");
 require("dotenv").config();
 const mongoose = require("mongoose");
+const AppError = require("./utils/AppError");
 const app = express();
 const cors = require("cors");
-const Task = require("./model/taskModel");
 const taskRoutes = require("./routes/taskRoutes");
 const authRoutes = require("./routes/authRoutes");
+const globalErrorHandler = require("./utils/globalErrorHandler");
 
 const PORT = "4000";
+mongoose.connect(process.env.MONGO_URI);
 
 app.use(cors());
 app.use(express.json());
 app.use("/", authRoutes);
 app.use("/tasks", taskRoutes);
+app.use(globalErrorHandler);
 
-mongoose.connect(process.env.MONGO_URI);
-
-app.get("/", async (req, res) => {
-  try {
-    const data = await Task.find();
-    res.status(200).json({ message: "Data retrieved successfully", data });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to retrieve data", details: err });
+app.all("*", (req, res, next) => {
+  try{
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  } catch(error){
+    next(error)
   }
-});
-
-app.all("*", (req, res) => {
-  res
-    .status(404)
-    .json({ status: "fail", message: `Can't find ${req.originalUrl} server` });
 });
 
 app.listen(PORT, () => {
