@@ -28,8 +28,7 @@ const taskSchema = new Schema({
   priority: { type: String, enum: ["High", "Medium", "Low"] },
   tags: [String],
   dueDate: { type: Date, default: Date.now },
-  comments: [{comment: String, date: Date}],
-  activityLog: [{ action: String, date: Date }],
+  comments: [{ comment: { type: String }, date: { type: Date } }],
 });
 
 taskSchema.pre("save", function (next) {
